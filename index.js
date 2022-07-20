@@ -2,9 +2,12 @@
 require("dotenv").config()
 require("express-group-routes")
 const express = require("express")
-const { getUser } = require("./controllers/users")
 const fs = require("fs")
 const winston = require("winston")
+const path = require("path")
+// controllers
+const { getUser } = require("./controllers/users")
+
 const { combine, timestamp, label, printf } = winston.format
 
 const myFormat = printf(({ level, message, label, timestamp }) => {
@@ -17,19 +20,10 @@ const logger = winston.createLogger({
   format: combine(label({ label: "right meow!" }), timestamp(), myFormat),
   defaultMeta: { service: "user-service" },
   transports: [
-    //
-    // - Write all logs with importance level of `error` or less to `error.log`
-    // - Write all logs with importance level of `info` or less to `combined.log`
-    //
     new winston.transports.File({ filename: "logs/error.log", level: "error" }),
-    // new winston.transports.File({ filename: "combined.log" }),
   ],
 })
 
-//
-// If we're not in production then log to the `console` with the format:
-// `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
-//
 if (process.env.NODE_ENV !== "production") {
   logger.add(
     new winston.transports.Console({
@@ -45,12 +39,13 @@ const app = express()
 //   return res.send("Hello Dany")
 // })
 
+// port
 const PORT = process.env.PORT || 8000
 
 // middleware list
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-app.use(express.static("./public"))
+app.use(express.static(path.join(".", "public")))
 
 app.group("/api/v1", (router) => {
   // get all users middleware route
