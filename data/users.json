@@ -1,0 +1,5 @@
+[
+  { "id": "1", "full_name": "stefanus", "address": "jakarta", "age": "20" },
+  { "id": "2", "full_name": "mamad", "address": "bekasi", "age": "18" },
+  { "id": 3, "full_name": "mamang kesbor", "address": "Jakut", "age": "33" }
+]
