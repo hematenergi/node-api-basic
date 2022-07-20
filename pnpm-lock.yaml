@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   dotenv: ^16.0.1
   express: ^4.18.1
+  express-group-routes: ^1.1.0
   express-rate-limit: ^6.4.0
   joi: ^17.6.0
   nodemon: ^2.0.19
@@ -11,6 +12,7 @@ specifiers:
 dependencies:
   dotenv: 16.0.1
   express: 4.18.1
+  express-group-routes: 1.1.0
   express-rate-limit: 6.4.0_express@4.18.1
   joi: 17.6.0
   winston: 3.8.1
@@ -273,6 +275,14 @@ packages:
   /etag/1.8.1:
     resolution: {integrity: sha512-aIL5Fx7mawVa300al2BnEE4iNvo1qETxLrPI/o05L7z6go7fCw1J6EQmbK4FmJ2AS7kgVF/KEZWufBfdClMcPg==}
     engines: {node: '>= 0.6'}
+    dev: false
+
+  /express-group-routes/1.1.0:
+    resolution: {integrity: sha512-KyYb90KdiPuE847Na4KIx3n2rfBQgg1QLuFO68zGJbrgnLpKu+IzglRgLA4uMZFcS2laTTebOYpy3sSnuU0u+g==}
+    dependencies:
+      express: 4.18.1
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /express-rate-limit/6.4.0_express@4.18.1:

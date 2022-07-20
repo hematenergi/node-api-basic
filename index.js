@@ -1,10 +1,9 @@
 // import and required modules
-const express = require("express")
-const fs = require("fs")
 require("dotenv").config()
-// const { logger } = require("./middleware/logger")
-// const rateLimit = require("express-rate-limit")
+require("express-group-routes")
+const express = require("express")
 const { getUser } = require("./controllers/users")
+const fs = require("fs")
 const winston = require("winston")
 const { combine, timestamp, label, printf } = winston.format
 
@@ -42,30 +41,25 @@ if (process.env.NODE_ENV !== "production") {
 const app = express()
 
 // default route
-app.get("/", (req, res) => {
-  return res.send("Hello Dany")
-})
+// app.get("/", (req, res) => {
+//   return res.send("Hello Dany")
+// })
 
 const PORT = process.env.PORT || 8000
 
-// const limitter = rateLimit({
-//   windowMs: 5 * 60 * 1000, // 5 minutes
-//   max: 1, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-//   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-//   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-// })
-
-// middleware
+// middleware list
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-// app.use(logger)
-// app.use(limitter)
+app.use(express.static("./public"))
 
+app.group("/api/v1", (router) => {
+  // get all users middleware route
+  router.use("/users", getUser)
+})
+
+// users.txt
 const users = JSON.parse(fs.readFileSync("./data/users.json"))
 const userExists = users && users.length > 0
-
-// get all users
-app.use("/users", getUser)
 
 // add user
 app.post("/users", (req, res, next) => {
@@ -117,23 +111,10 @@ app.patch("/users/:id", (req, res, next) => {
   // if (req.body.age) {
   //     users[indexOfDataExist].age = req.body.age
   // }
-
   users[indexOfDataExist] = {
     ...users[indexOfDataExist],
     ...req.body,
   }
-
-  // baju = {warna: 'ungu', ukuran: m}
-  // pengganti = {warna: 'merah', bahan: 'katun'}
-
-  // baju = {...baju} // => {warna: 'ungu', ukuran: m}
-
-  // newBaju = {...baju, ...pengganti} // => {warna: 'merah', ukuran: m}
-  // newBaju = {warna: 'ungu', ukuran: m, warna: 'merah',  bahan: 'katun'} // => { ukuran: m, warna: 'merah',  bahan: 'katun'}
-
-  // users[indexOfDataExist].full_name = req.body.full_name
-  // users[indexOfDataExist].address = req.body.address
-  // users[indexOfDataExist].age = req.body.age
 
   // konversi data array/object ke string
   usersAsString = JSON.stringify(users)
