@@ -2,9 +2,36 @@
 const express = require("express")
 const fs = require("fs")
 require("dotenv").config()
-const { logger } = require("./middleware/logger")
+// const { logger } = require("./middleware/logger")
 // const rateLimit = require("express-rate-limit")
 const { getUser } = require("./controllers/users")
+const logger = require("winston")
+
+const logger = winston.createLogger({
+  level: "info",
+  format: winston.format.json(),
+  defaultMeta: { service: "user-service" },
+  transports: [
+    //
+    // - Write all logs with importance level of `error` or less to `error.log`
+    // - Write all logs with importance level of `info` or less to `combined.log`
+    //
+    new winston.transports.File({ filename: "logs/error.log", level: "error" }),
+    // new winston.transports.File({ filename: "combined.log" }),
+  ],
+})
+
+//
+// If we're not in production then log to the `console` with the format:
+// `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
+//
+if (process.env.NODE_ENV !== "production") {
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    })
+  )
+}
 
 const app = express()
 
@@ -25,7 +52,7 @@ const PORT = process.env.PORT || 8000
 // middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-app.use(logger)
+// app.use(logger)
 // app.use(limitter)
 
 const users = JSON.parse(fs.readFileSync("./data/users.json"))
@@ -155,7 +182,9 @@ app.use("*", (req, res, next) =>
 
 // error middleware
 app.use((err, req, res, next) => {
+  logger.error(JSON.stringify(err.message))
   console.log(err)
+
   return res
     .status(err?.code || 500)
     .json({ message: err?.message || "Internal server error" })
