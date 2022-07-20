@@ -7,6 +7,7 @@ const winston = require("winston")
 const path = require("path")
 // controllers
 const { getUser } = require("./controllers/users")
+const { getOrders } = require("./controllers/orders")
 
 const { combine, timestamp, label, printf } = winston.format
 
@@ -45,12 +46,16 @@ const PORT = process.env.PORT || 8000
 // middleware list
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-app.use(express.static(path.join(".", "public")))
+app.use("/public", express.static(path.join(".", "public")))
+app.set("view engine", "ejs")
 
 app.group("/api/v1", (router) => {
   // get all users middleware route
   router.use("/users", getUser)
 })
+
+// testing view engines
+app.use(getOrders)
 
 // users.txt
 const users = JSON.parse(fs.readFileSync("./data/users.json"))
