@@ -157,9 +157,14 @@ app.use("*", (req, res, next) =>
 app.use((err, req, res, next) => {
   console.log(err)
   return res
-    .status(500)
+    .status(err?.code || 500)
     .json({ message: err?.message || "Internal server error" })
 })
+
+// throw {
+//   code: 404,
+//   message: "endpoint not found",
+// }
 
 app.listen(PORT, () => {
   console.log(`Server Running On Port ${PORT}`)
