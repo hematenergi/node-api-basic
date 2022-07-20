@@ -5,11 +5,17 @@ require("dotenv").config()
 // const { logger } = require("./middleware/logger")
 // const rateLimit = require("express-rate-limit")
 const { getUser } = require("./controllers/users")
-const logger = require("winston")
+const winston = require("winston")
+const { combine, timestamp, label, printf } = winston.format
+
+const myFormat = printf(({ level, message, label, timestamp }) => {
+  return `${timestamp} [${label}] ${level}: ${message}`
+})
 
 const logger = winston.createLogger({
   level: "info",
-  format: winston.format.json(),
+  // format: winston.format.json(),
+  format: combine(label({ label: "right meow!" }), timestamp(), myFormat),
   defaultMeta: { service: "user-service" },
   transports: [
     //
